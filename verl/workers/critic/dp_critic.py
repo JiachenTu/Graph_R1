@@ -31,7 +31,15 @@ from verl.utils.torch_functional import masked_mean
 from verl.utils.ulysses import ulysses_pad_and_slice_inputs, gather_outpus_and_unpad
 from verl.utils.seqlen_balancing import rearrange_micro_batches, get_reverse_idx
 
-from flash_attn.bert_padding import pad_input, unpad_input, rearrange, index_first_axis
+try:
+    from flash_attn.bert_padding import pad_input, unpad_input, rearrange, index_first_axis
+    FLASH_ATTN_AVAILABLE = True
+except ImportError:
+    FLASH_ATTN_AVAILABLE = False
+    pad_input = None
+    unpad_input = None
+    rearrange = None
+    index_first_axis = None
 
 __all__ = ['DataParallelPPOCritic']
 

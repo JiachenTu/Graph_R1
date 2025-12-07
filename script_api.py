@@ -1,3 +1,4 @@
+import os
 import json
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -9,6 +10,9 @@ import argparse
 from graphr1 import GraphR1, QueryParam
 import asyncio
 from tqdm import tqdm
+
+# Load OpenAI API key from file
+os.environ["OPENAI_API_KEY"] = open("openai_api_key.txt").read().strip()
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_source', default='2WikiMultiHopQA')

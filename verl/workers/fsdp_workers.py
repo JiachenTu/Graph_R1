@@ -201,7 +201,7 @@ class ActorRolloutRefWorker(Worker):
             actor_module = AutoModelForCausalLM.from_pretrained(pretrained_model_name_or_path=local_path,
                                                                 torch_dtype=torch_dtype,
                                                                 config=actor_model_config,
-                                                                attn_implementation='flash_attention_2',
+                                                                attn_implementation='eager',
                                                                 trust_remote_code=trust_remote_code)
             # Apply Liger kernel to the model if use_liger is set to True
             if use_liger:
@@ -676,7 +676,7 @@ class CriticWorker(Worker):
             critic_module = AutoModelForTokenClassification.from_pretrained(pretrained_model_name_or_path=local_path,
                                                                             torch_dtype=torch_dtype,
                                                                             config=critic_model_config,
-                                                                            attn_implementation='flash_attention_2',
+                                                                            attn_implementation='eager',
                                                                             trust_remote_code=trust_remote_code)
 
             # some parameters may not in torch_dtype
@@ -931,7 +931,7 @@ class RewardModelWorker(Worker):
             reward_module = AutoModelForTokenClassification.from_pretrained(pretrained_model_name_or_path=local_path,
                                                                             config=model_config,
                                                                             torch_dtype=torch.bfloat16,
-                                                                            attn_implementation='flash_attention_2',
+                                                                            attn_implementation='eager',
                                                                             trust_remote_code=trust_remote_code)
             reward_module.to(torch.bfloat16)
         auto_wrap_policy = get_fsdp_wrap_policy(module=reward_module, config=self.config.model.fsdp_config)
@@ -961,7 +961,15 @@ class RewardModelWorker(Worker):
         torch.cuda.empty_cache()
 
     def _forward_micro_batch(self, micro_batch):
-        from flash_attn.bert_padding import pad_input, unpad_input, index_first_axis, rearrange
+        try:
+            from flash_attn.bert_padding import pad_input, unpad_input, index_first_axis, rearrange
+            FLASH_ATTN_AVAILABLE = True
+        except ImportError:
+            FLASH_ATTN_AVAILABLE = False
+            pad_input = None
+            unpad_input = None
+            index_first_axis = None
+            rearrange = None
         from verl.utils.ulysses import ulysses_pad_and_slice_inputs, gather_outpus_and_unpad
 
         with torch.no_grad(), torch.autocast(device_type='cuda', dtype=torch.bfloat16):
