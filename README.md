@@ -1,7 +1,5 @@
 # Taming the Agent: A Systematic Study on Divergence Control and Model Scaling for RL-Incentivized Graph Reasoning Models
 
-This repository builds upon [Graph-R1](https://github.com/LHRLAB/Graph-R1) [[paper](https://arxiv.org/abs/2507.21892)].
-
 ## Abstract
 
 Recent advances in agentic GraphRAG frameworks, particularly those optimized via end-to-end reinforcement learning (RL) like Group Relative Policy Optimization (GRPO), have shown remarkable success in complex graph reasoning tasks. However, while prior work demonstrates that such agents *can* achieve strong performance, the optimization process remains a "black box"---practitioners lack principled guidance on how hyperparameters shape training dynamics. In particular, the KL divergence penalty is typically treated as a fixed implementation detail, yet its role in governing the crucial **exploration-exploitation trade-off** for graph reasoning is poorly understood. In this work, we conduct the first systematic investigation into the optimization dynamics of GRPO for agentic graph reasoning on the `2WikiMultiHopQA` benchmark, analyzing two critical axes: KL divergence control and base model scale. Our findings reveal three key insights: (1) the KL coefficient is not merely a stability mechanism but the **primary lever controlling exploration-exploitation balance**, with both insufficient and excessive regularization causing substantial degradation; (2) we uncover the **"overthinking paradox"**---weaker policies generate more reasoning turns while achieving worse performance, demonstrating that reasoning quality dominates quantity; and (3) larger base models provide **multiplicative advantages**, exhibiting controlled exploration and "capability breakthroughs" that smaller models cannot replicate. Based on these findings, we provide actionable guidelines to demystify RL-based graph reasoning and build more robust agentic systems.
@@ -29,4 +27,4 @@ Based on our extensive empirical results, we provide actionable guidelines for t
 
 ## Acknowledgement
 
-This repo builds upon [Graph-R1](https://github.com/LHRLAB/Graph-R1).
+This repo builds upon [Graph-R1](https://github.com/LHRLAB/Graph-R1) [[paper](https://arxiv.org/abs/2507.21892)]. Thanks for their wonderful work.
